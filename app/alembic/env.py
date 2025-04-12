@@ -3,7 +3,7 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
 import os
-from Training.database import Base  # Import your Base metadata
+from database.database import Base  # Import your Base metadata
 
 # Load environment variables from .env
 load_dotenv()
