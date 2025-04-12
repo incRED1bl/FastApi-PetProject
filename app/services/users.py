@@ -1,5 +1,6 @@
 from models.users import User
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from schemas.users.request import UserBase, UserCreate
 
 def create_user(data: UserCreate, db: Session):
@@ -13,8 +14,8 @@ def create_user(data: UserCreate, db: Session):
         raise Exception(f"Error creating user: {e}")
     return user
 
-def get_user(id: int, db: Session):
-    return db.query(User).filter(User.id == id).first()
+def get_user(id: int, sess: Session) -> User | None:
+    return sess.execute(select(User).where(User.id == id)).scalar_one_or_none()
 
 def update(data: UserBase, id: int, db: Session):
     user = db.query(User).filter(User.id == id).first()
