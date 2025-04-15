@@ -8,6 +8,8 @@ import os
 load_dotenv()
 
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+
+
 engine = create_async_engine(
     SQLALCHEMY_DATABASE_URL,
     pool_size=100,
@@ -24,4 +26,6 @@ SessionLocal = async_sessionmaker(
 class Base(DeclarativeBase): ...
 
 
-Base.metadata.create_all(bind=engine)
+async def init_db():
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)

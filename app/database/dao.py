@@ -1,5 +1,5 @@
 from .database import Base
-from sqlalchemy.orm import Session
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from typing import Type, TypeVar, Generic
 
@@ -13,35 +13,35 @@ class TemplateDAO(Generic[T]):
     def __init__(self, db_model: T) -> None:
         self.db_model: T = db_model
 
-    def get(self, id: int, sess: Session) -> T | None:
+    async def get(self, id: int, sess: AsyncSession) -> T | None:
         stmt = select(self.db_model).where(self.db_model.id == id)
-        return sess.execute(stmt).scalar_one_or_none()
+        return (await sess.execute(stmt)).scalar_one_or_none()
 
-    def get_scalar(self, id: int, sess: Session) -> T:
+    async def get_scalar(self, id: int, sess: AsyncSession) -> T:
         stmt = select(self.db_model).where(self.db_model.id == id)
-        return sess.execute(stmt).scalar_one()
+        return (await sess.execute(stmt)).scalar_one()
 
-    def delete(self, id: int, sess: Session) -> None:
+    async def delete(self, id: int, sess: AsyncSession) -> None:
         stmt = self.db_model.__table__.delete().where(self.db_model.id == id)
-        sess.execute(stmt)
+        await sess.execute(stmt)
 
-    def update(self, id: int, values: dict, sess: Session) -> T:
+    async def update(self, id: int, values: dict, sess: AsyncSession) -> T:
         stmt = (
             self.db_model.__table__.update()
             .where(self.db_model.id == id)
             .values(**values)
         )
-        sess.execute(stmt)
-        return self.get_scalar(id, sess)
+        await sess.execute(stmt)
+        return await self.get_scalar(id, sess)
 
-    def create(self, instance: T, sess: Session) -> T:
+    async def create(self, instance: T, sess: AsyncSession) -> T:
         sess.add(instance)
-        sess.flush()
+        await sess.flush()
         return instance
 
-    def create_all(self, instances: list[T], sess: Session) -> list[T]:
+    async def create_all(self, instances: list[T], sess: AsyncSession) -> list[T]:
         sess.add_all(instances)
-        sess.flush()
+        await sess.flush()
         return instances
 
 
