@@ -7,3 +7,7 @@ class UserBase(BaseConfig):
 
 class UserCreate(BaseConfig):
     name: str
+
+
+class UserUpdate(BaseConfig):
+    name: str

@@ -1,44 +1,22 @@
 from models.users import User
 from sqlalchemy.orm import Session
 from sqlalchemy import select
-from schemas.users.request import UserBase, UserCreate
+from schemas.users.request import UserUpdate, UserCreate
+from fastapi.exceptions import HTTPException
+from dao.user import UserDAO
 
-def create_user(data: UserCreate, db: Session):
-    user = User(name=data.name)
-    try:
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    except Exception as e:
-        db.rollback()
-        raise Exception(f"Error creating user: {e}")
-    return user
+
+def create_user(data: UserCreate, sess: Session) -> User:
+    return UserDAO.create(User(name=data.name), sess)
 
 def get_user(id: int, sess: Session) -> User | None:
-    return sess.execute(select(User).where(User.id == id)).scalar_one_or_none()
+    return UserDAO.get(id, sess)
 
-def update(data: UserBase, id: int, db: Session):
-    user = db.query(User).filter(User.id == id).first()
-    if not user:
-        return None
-    user.name = data.name
-    try:
-        db.add(user)
-        db.commit()
-        db.refresh(user)
-    except Exception as e:
-        db.rollback()
-        raise Exception(f"Error updating user: {e}")
-    return user
+def update(data: UserUpdate, id: int, sess: Session) -> User:
+    return UserDAO.update(id, {"name": data.name}, sess)
 
-def delete_user(id: int, db: Session):
-    user = db.query(User).filter(User.id == id).first()
+def delete_user(id: int, sess: Session):
+    user = UserDAO.get(id, sess)
     if not user:
-        return None
-    try:
-        db.delete(user)
-        db.commit()
-    except Exception as e:
-        db.rollback()
-        raise Exception(f"Error deleting user: {e}")
-    return {"message": "User deleted successfully"}
+        raise HTTPException(204, detail="User not found")
+    return UserDAO.delete(id, sess)
