@@ -1,9 +1,9 @@
-from models.users import User
+from app.models.users import User
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from schemas.users.request import UserUpdate, UserCreate
+from app.schemas.users.request import UserUpdate, UserCreate
 from fastapi.exceptions import HTTPException
-from dao.user import UserDAO
+from app.dao.user import UserDAO
 
 
 async def create_user(data: UserCreate, sess: AsyncSession) -> User:

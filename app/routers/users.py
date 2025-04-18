@@ -3,22 +3,22 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 
 
-from services import users as user_service
-from schemas.users.request import UserBase, UserCreate
-from schemas.users.response import UserResponse
-from schemas.cfg import BaseResponse
+from app.services import users as user_service
+from app.schemas.users.request import UserBase, UserCreate
+from app.schemas.users.response import UserResponse
+from app.schemas.cfg import BaseResponse
 
 from fastapi.requests import Request
 
 
 router = APIRouter()
 
-@router.post("/", tags=["users"])
+@router.post(f"/{id}", tags=["users"])
 async def create(data: UserCreate, request: Request) -> BaseResponse[UserResponse]:
     sess: AsyncSession = request.state.sess
     return BaseResponse(data=UserResponse.model_validate(await user_service.create_user(data, sess)))
 
-@router.get("/{id}", tags=["users"])
+@router.get("/", tags=["users"])
 async def get_user(id: int, request: Request) -> BaseResponse[UserResponse]:
     sess: AsyncSession = request.state.sess
     if user := await user_service.get_user(id, sess):

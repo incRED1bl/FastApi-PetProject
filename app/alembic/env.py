@@ -3,8 +3,8 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
 import os
-from database.database import Base  # Import your Base metadata
-
+from app.database.database import Base
+from app.models.users import User  # Import your models here
 # Load environment variables from .env
 load_dotenv()
 

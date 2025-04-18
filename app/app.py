@@ -6,11 +6,11 @@ from fastapi.requests import Request
 from fastapi.responses import Response
 from fastapi.responses import JSONResponse
 
-from schemas.cfg import BaseResponse
+from app.schemas.cfg import BaseResponse
 
 from sqlalchemy.orm import Session
 from sqlalchemy.ext.asyncio import AsyncSession
-from database.database import SessionLocal
+from app.database.database import SessionLocal
 
 
 app = FastAPI()
@@ -18,7 +18,7 @@ app = FastAPI()
 router = APIRouter()
 
 
-from routers.users import router as UserRouter
+from app.routers.users import router as UserRouter
 
 api_version = "/v1"
 
@@ -44,4 +44,4 @@ async def db_session_middleware(request: Request, call_next):
 
 
 if __name__ == "__main__":
-    uvicorn.run("app:app", host="0.0.0.0", port=8069, reload=True)
+    uvicorn.run("app:app", host="0.0.0.0", port=8080, reload=True)

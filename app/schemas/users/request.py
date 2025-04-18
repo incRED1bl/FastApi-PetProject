@@ -1,4 +1,4 @@
-from schemas.cfg import BaseConfig
+from app.schemas.cfg import BaseConfig
 
 class UserBase(BaseConfig):
     id: int
