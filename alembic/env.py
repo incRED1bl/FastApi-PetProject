@@ -3,19 +3,27 @@ from sqlalchemy import engine_from_config, pool
 from alembic import context
 from dotenv import load_dotenv
 import os
+
+# Import your Base and models
 from app.database.database import Base
-from app.models.users import User  # Import your models here
+from app.models.users import User  # Import all your models here
+
 # Load environment variables from .env
 load_dotenv()
 
-# Get the database URL from the .env file
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Get the async DATABASE_URL from the .env file
+ASYNC_DATABASE_URL = os.getenv("DATABASE_URL")
+if not ASYNC_DATABASE_URL:
+    raise ValueError("DATABASE_URL is not set in the .env file")
+
+# Convert the async DATABASE_URL to a sync one for Alembic
+SYNC_DATABASE_URL = ASYNC_DATABASE_URL.replace("asyncpg", "psycopg2")
 
 # Alembic Config object, which provides access to the .ini file values
 config = context.config
 
-# Set the sqlalchemy.url dynamically from the DATABASE_URL
-config.set_main_option("sqlalchemy.url", DATABASE_URL)
+# Set the sqlalchemy.url dynamically from the SYNC_DATABASE_URL
+config.set_main_option("sqlalchemy.url", SYNC_DATABASE_URL)
 
 # Interpret the config file for Python logging
 fileConfig(config.config_file_name)
