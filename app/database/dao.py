@@ -22,7 +22,7 @@ class TemplateDAO(Generic[T]):
         return (await sess.execute(stmt)).scalar_one()
 
     async def delete(self, id: int, sess: AsyncSession) -> None:
-        stmt = self.db_model.__table__.delete().where(self.db_model.id == id)
+        stmt = delete(self.db_model).where(self.db_model.id == id)
         await sess.execute(stmt)
 
     async def update(self, id: int, values: dict, sess: AsyncSession) -> T:

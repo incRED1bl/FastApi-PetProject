@@ -1,4 +1,3 @@
-
 # FastAPI Project
 
 This project is a FastAPI-based web application with PostgreSQL as the database. It uses **Poetry** for dependency management and includes features like database session handling, modular routing, and middleware.
@@ -19,6 +18,8 @@ DATABASE_URL=postgresql+asyncpg://`<username>`:`<password>`@`<host>`:`<port>`/`<
 
 Then run several commands in terminal:
 
+```
 poetry run alembic upgrade head
 
 poetry run uvicorn app.app:app --reload
+```
