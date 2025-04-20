@@ -19,4 +19,4 @@ async def delete_user(id: int, sess: AsyncSession):
     user = await UserDAO.get(id, sess)
     if not user:
         raise HTTPException(204, detail="User not found")
-    return UserDAO.delete(id, sess)
+    return await UserDAO.delete(id, sess)
